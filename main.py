@@ -51,7 +51,6 @@ def move(game_state: typing.Dict) -> typing.Dict:
     hazards = [list(coord.values()) for coord in game_state['board']['hazards']]
     width = game_state['board']['width']
     height = game_state['board']['height']    
-    print(body)
     gs = GameState(body,food,hazards,width,height)
     mcts = MCTS(gs,game_state['game']['timeout'])
     next_move = mcts.MCTSSearch()

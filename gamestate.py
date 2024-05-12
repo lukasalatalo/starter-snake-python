@@ -21,10 +21,10 @@ class GameState:
         return map
     
     def copy_gs(self):
-        body = self.body
-        food = self.food
+        body = self.body[:]
+        food = self.food[:]
         #snakes=self.snakes
-        oc= self.occupied
+        oc= self.occupied[:]
         gs = GameState(body,food,oc,self.width,self.height)
         return gs
         

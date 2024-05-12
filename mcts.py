@@ -28,7 +28,7 @@ class MCTS:
         self.capsule_score: int = 50000
         self.ghost_score: int = -100000
         self.pacman_score: int = 100000
-        self.episode: int = 1
+        self.episode: int = 5
         self.depth: int = 10
         self.tree_depth: int = 0
         self.tree_depth_thres: int = 10
@@ -149,7 +149,6 @@ class MCTS:
     def Rollout(self, leaf):
         
         neighbours = self.GetNeighbours(self.game_state, leaf)
-        print(neighbours)
         expandedNodes = []
         for action, pos in neighbours.items():
             if list(pos) not in self.closed:
