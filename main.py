@@ -85,11 +85,12 @@ def move(game_state: typing.Dict) -> typing.Dict:
         for move, isSafe in is_move_safe.items():
             if isSafe:
                 safe_moves.append(move)
-
+        
         if len(safe_moves) == 0:
             print(
                 f"MOVE {game_state['turn']}: No safe moves detected! Moving down"
             )
+            
             return {"move": "down"}
 
         # Choose a random move from the safe ones
@@ -98,9 +99,23 @@ def move(game_state: typing.Dict) -> typing.Dict:
 
 
 
-    
+    print_reward_map1(mcts)
     return {"move": next_move}
-
+    
+def print_reward_map1(self):
+    print("Reward Map:")
+    for row in self.reward_map:
+        row_str = "|"
+        for value in row:
+            if value < -50000:
+                row_str += " X |"
+            elif value < 0:
+                row_str += " S |"
+            elif value > 1:
+                row_str += " O |"
+            else:
+                row_str += "   |"
+        print(row_str)
 # Start server when `python main.py` is run
 if __name__ == "__main__":
     from server import run_server

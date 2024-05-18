@@ -41,16 +41,16 @@ class MCTS:
         self.blank_enemy_score: int = 5
         self.food_score: int = self.calculate_food_value()
         self.death_penalty: int = -999999999
-        self.episode: int = 3
-        self.depth: int = 10
+        self.episode: int = 2
+        self.depth: int = 15
         self.tree_depth: int = 0
-        self.tree_depth_thres: int = 10
+        self.tree_depth_thres: int = 15
         self.epsilon: float = 0.01
         self.gamma: float = 0.9
         self.root: Node = Node(game_state.body)
         self.location = self.root.location
         self.closed: list = [self.root.location]
-        self.reward_map = np.zeros(
+        self.reward_map = np.ones(
             (self.game_state.width, self.game_state.height))
         self.build_rewards()
 
@@ -70,20 +70,20 @@ class MCTS:
                             abs(np.linalg.norm(indx - ind)) / 3)**2:
                     self.reward_map[ind[0], ind[1]] = -1000 * (
                         abs(np.linalg.norm(indx - ind)) / 3)**2"""
-        print("-----building rewards-----")
+        #print("-----building rewards-----")
         for player in self.game_state.players:
 
             for o in player['body']:
                 row, col = board_to_matrix([o['x'], o['y']],
                                            self.game_state.height)
-                print(f"x: {o['x']}, y: {o['y']}")
-                print(f"row: {row}, col: {col}")
-                self.reward_map[row][col] = -10000
+                #print(f"x: {o['x']}, y: {o['y']}")
+                #print(f"row: {row}, col: {col}")
+                self.reward_map[row][col] = -100000
 
         # Set a high penalty for potential head-to-head collision positions
-        print("-----otherheads-----")
+        #print("-----otherheads-----")
         for i, enemy in enumerate(self.game_state.other_heads):
-            print(f"enemy: {enemy} for {i}")
+            #print(f"enemy: {enemy} for {i}")
             head = enemy  # Assuming the first element is the head of the enemy snake
             potential_positions = [
                 (head['x'] + 1, head['y']),  # Move right
@@ -94,13 +94,11 @@ class MCTS:
 
             bigger = 0.001 if self.length > self.game_state.others[i][
                 'length'] else -1
-            print("First checkpoint")
-            print(f"bigger: {1 * bigger}")
             for pos in potential_positions:
                 if self.is_in_bounds(self.game_state.width,
                                      self.game_state.height, pos[1], pos[0]):
                     x, y = board_to_matrix(pos, self.game_state.height)
-                    self.reward_map[x][y] = 10000 * bigger
+                    self.reward_map[x][y] += 10000 * bigger
 
         
         food_value = self.calculate_food_value() * 0.01
@@ -126,9 +124,11 @@ class MCTS:
         for row in self.reward_map:
             row_str = "|"
             for value in row:
-                if value < 0:
+                if value < -50000:
                     row_str += " X |"
-                elif value > 0:
+                elif value < 0:
+                    row_str += " S |"
+                elif value > 1:
                     row_str += " O |"
                 else:
                     row_str += "   |"
