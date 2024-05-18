@@ -41,7 +41,7 @@ class MCTS:
         self.blank_enemy_score: int = 5
         self.food_score: int = self.calculate_food_value()
         self.death_penalty: int = -999999999
-        self.episode: int = 2
+        self.episode: int = 4
         self.depth: int = 15
         self.tree_depth: int = 0
         self.tree_depth_thres: int = 15
