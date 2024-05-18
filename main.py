@@ -24,10 +24,10 @@ def info() -> typing.Dict:
 
     return {
         "apiversion": "1",
-        "author": "lukasalatalo", 
-        "color": "#FFFF00",  
-        "head": "default", 
-        "tail": "default", 
+        "author": "lukaschris",
+        "color": "#FFFF00",
+        "head": "default",
+        "tail": "default",
     }
 
 
@@ -45,47 +45,61 @@ def end(game_state: typing.Dict):
 # Valid moves are "up", "down", "left", or "right"
 # See https://docs.battlesnake.com/api/example-move for available data
 def move(game_state: typing.Dict) -> typing.Dict:
- 
+
     body = [list(coord.values()) for coord in game_state['you']['body']]
     food = [list(coord.values()) for coord in game_state['board']['food']]
-    hazards = [list(coord.values()) for coord in game_state['board']['hazards']]
+    hazards = [
+        list(coord.values()) for coord in game_state['board']['hazards']
+    ]
+    print("----------------------")
     width = game_state['board']['width']
-    height = game_state['board']['height']    
-    gs = GameState(body,food,hazards,width,height)
-    mcts = MCTS(gs,game_state['game']['timeout'])
+    height = game_state['board']['height']
+    my_snake_id = game_state['you']['id']
+    health = game_state['you']['health']
+    snakes = game_state['board']['snakes']
+    gs = GameState(body, food, hazards, width, height, my_snake_id, snakes, health, game_state['you'])
+    mcts = MCTS(gs, game_state['game']['timeout'])
+
     next_move = mcts.MCTSSearch()
-    if next_move=='':
+    if next_move == '':
+
         is_move_safe = {"up": True, "down": True, "left": True, "right": True}
         my_head = game_state["you"]["body"][0]  # Coordinates of your head
         my_neck = game_state["you"]["body"][1]  # Coordinates of your "neck"
-        if my_neck["x"] < my_head["x"]:  # Neck is left of head, don't move left
+        if my_neck["x"] < my_head[
+                "x"]:  # Neck is left of head, don't move left
             is_move_safe["left"] = False
 
-        elif my_neck["x"] > my_head["x"]:  # Neck is right of head, don't move right
+        elif my_neck["x"] > my_head[
+                "x"]:  # Neck is right of head, don't move right
             is_move_safe["right"] = False
 
-        elif my_neck["y"] < my_head["y"]:  # Neck is below head, don't move down
+        elif my_neck["y"] < my_head[
+                "y"]:  # Neck is below head, don't move down
             is_move_safe["down"] = False
 
         elif my_neck["y"] > my_head["y"]:  # Neck is above head, don't move up
             is_move_safe["up"] = False
-        
+
         safe_moves = []
         for move, isSafe in is_move_safe.items():
             if isSafe:
                 safe_moves.append(move)
 
         if len(safe_moves) == 0:
-            print(f"MOVE {game_state['turn']}: No safe moves detected! Moving down")
+            print(
+                f"MOVE {game_state['turn']}: No safe moves detected! Moving down"
+            )
             return {"move": "down"}
 
         # Choose a random move from the safe ones
         next_move = random.choice(safe_moves)
-    
-
     print(f"MOVE {game_state['turn']}: {next_move}")
-    return {"move": next_move}
 
+
+
+    
+    return {"move": next_move}
 
 # Start server when `python main.py` is run
 if __name__ == "__main__":
