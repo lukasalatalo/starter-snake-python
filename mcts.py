@@ -294,14 +294,14 @@ class MCTS:
         right = [pos[0] + 1, pos[1]]
         left = [pos[0] - 1, pos[1]]
 
-        if up[1] < gs.height and up not in gs.occupied and up not in gs.body:
+        if up[1] < gs.height and up not in gs.body:
             neighbours["up"] = up
-        if down[1] >= 0 and down not in gs.occupied and down not in gs.body:
+        if down[1] >= 0 and down not in gs.body:
             neighbours["down"] = down
         if right[
-                0] < gs.width and right not in gs.occupied and right not in gs.body:
+                0] < gs.width and  right not in gs.body:
             neighbours["right"] = right
-        if left[0] >= 0 and left not in gs.occupied and left not in gs.body:
+        if left[0] >= 0 and  left not in gs.body:
             neighbours["left"] = left
 
         return neighbours
